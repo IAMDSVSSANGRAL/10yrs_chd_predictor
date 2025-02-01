@@ -1,12 +1,14 @@
 from predictor.exception import tenyearchdexception
+from predictor.logger import logging
 import sys
 
 def test_exception():
     try:
+        logging.info("We will see one error here.")
         a=1/0
     except Exception as e:
-        #raise tenyearchdexception(e,sys)
-        raise e
+        raise tenyearchdexception(e,sys)
+        
 
 
 if __name__ == "__main__":
