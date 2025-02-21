@@ -1,5 +1,5 @@
-from predictor.exception import tenyearchdexception
-from predictor.logger import logging
+from src.predictor.exception import tenyearchdexception
+from src.predictor.logger import logging
 import sys
 
 def test_exception():

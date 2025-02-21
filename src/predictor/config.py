@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import os
 from dotenv import load_dotenv
 import logging
-from exception import tenyearchdexception
+from exception import TenYearChdException
 import sys
 
 # Load environment variables
@@ -24,7 +24,7 @@ class Config:
 
     except Exception as e:
         logger.error("Error loading config values", exc_info=True)
-        raise tenyearchdexception(e, sys)
+        raise TenYearChdException(e, sys)
 
     def get_database_url(self) -> str:
         """
@@ -37,4 +37,4 @@ class Config:
             return db_url
         except Exception as e:
             logger.error("Error constructing database URL", exc_info=True)
-            raise tenyearchdexception(e, sys)
+            raise TenYearChdException(e, sys)
