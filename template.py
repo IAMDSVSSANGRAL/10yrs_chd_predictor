@@ -23,7 +23,8 @@ list_of_files=[
     "app.py",
     "Dockerfile",
     "requirements.txt",
-    "setup.py"
+    "setup.py",
+    ".env"
 ]
 
 for filepath in list_of_files:
