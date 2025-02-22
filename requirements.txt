@@ -4,5 +4,8 @@ python-dotenv
 psycopg2-binary
 SQLAlchemy
 scikit-learn
+matplotlib
+seaborn
+missingno
 
 -e . #editable node
