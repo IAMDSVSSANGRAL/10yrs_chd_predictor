@@ -3,5 +3,6 @@ pandas==2.2.3
 python-dotenv
 psycopg2-binary
 SQLAlchemy
+scikit-learn
 
 -e . #editable node
