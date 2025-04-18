@@ -171,3 +171,4 @@ cython_debug/
 .pypirc
 /artifacts
 /datadvc
+/notebooks/raw.csv
