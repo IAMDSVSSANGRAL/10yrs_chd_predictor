@@ -1,19 +1,15 @@
+from flask import Flask, jsonify
 from src.predictor.logger import logging
-from src.predictor.exception import TenYearChdException
-from src.predictor.components.data_ingestion import DataIngestion
-from src.predictor.components.data_ingestion import DataIngestionConfig
-import os
-import sys
 
-if __name__ =="__main__":
-    logging.info("The execution has started")
+app = Flask(__name__)
 
-    try:
-        # data_ingestion_config=DataIngestionConfig()
-        data_ingestion=DataIngestion()
-        data_ingestion.initiate_data_ingestion()
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        "message": "Welcome to the Ten-Year CHD Risk Prediction Pipeline!",
+        "status": "Data Ingestion and Transformation components are ready."
+    })
 
-
-    except Exception as e:
-        logging.info("Custom Exception")
-        raise TenYearChdException(e,sys)
+if __name__ == '__main__':
+    logging.info("Starting the Flask app...")
+    app.run(debug=True)
