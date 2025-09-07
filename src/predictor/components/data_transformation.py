@@ -6,7 +6,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, OrdinalEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import SMOTE
 import joblib
 
 from src.predictor.exception import TenYearChdException
@@ -50,18 +50,18 @@ class DataTransformation:
         elif glucose < 400: return 4
         else: return 5
 
-    def initiate_data_transformation(self, train_path, test_path):
+    def initiate_data_transformation(self, train_path, test_path) -> tuple:
         try:
             train_df = read_csv_data(train_path)
             test_df = read_csv_data(test_path)
 
             logging.info("Read train and test data")
 
-            # drop id
+            # Drop ID column
             train_df.drop('id', axis=1, inplace=True)
             test_df.drop('id', axis=1, inplace=True)
 
-            # handle missing values
+            # Handle missing values
             impute_cols = ['education', 'cigsperday', 'bpmeds', 'totchol', 'bmi', 'heartrate', 'glucose']
             for col in impute_cols:
                 imputer = SimpleImputer(strategy='median')
@@ -70,13 +70,13 @@ class DataTransformation:
 
             logging.info("Missing values handled")
 
-            # remove outliers
+            # Remove outliers from train data only
             outlier_cols = ['age', 'totchol', 'sysbp', 'diabp', 'bmi', 'heartrate', 'glucose']
             train_df = self.remove_outliers_iqr(train_df, outlier_cols)
 
             logging.info("Outliers removed from training set")
 
-            # new features
+            # Feature engineering
             train_df['hypertension'] = train_df.apply(lambda x: self.blood_pressure_classification(x['sysbp'], x['diabp']), axis=1)
             test_df['hypertension'] = test_df.apply(lambda x: self.blood_pressure_classification(x['sysbp'], x['diabp']), axis=1)
 
@@ -94,9 +94,8 @@ class DataTransformation:
             X_test = test_df.drop(columns=[target_column])
             y_test = test_df[target_column]
 
-            # Column categorization
-            num_features = ['age', 'totchol', 'sysbp', 'diabp', 'bmi', 'heartrate', 'glucose',
-                            'mean_art_pressure']
+            # Feature type groups
+            num_features = ['age', 'totchol', 'sysbp', 'diabp', 'bmi', 'heartrate', 'glucose', 'mean_art_pressure']
             ord_features = ['education']
             nom_features = ['sex', 'is_smoking']
             bin_features = ['bpmeds', 'prevalentstroke', 'prevalenthyp', 'diabetes']
@@ -129,10 +128,19 @@ class DataTransformation:
             X_train_processed = preprocessor.fit_transform(X_train)
             X_test_processed = preprocessor.transform(X_test)
 
-            joblib.dump(preprocessor, self.transformation_config.preprocessor_obj_file_path)
-            logging.info("Preprocessor saved")
+            logging.info("Feature transformation done")
 
-            return (X_train_processed,  X_test_processed, self.transformation_config.preprocessor_obj_file_path)
+            # Save preprocessor
+            joblib.dump(preprocessor, self.transformation_config.preprocessor_obj_file_path)
+            logging.info("Preprocessor saved at {}".format(self.transformation_config.preprocessor_obj_file_path))
+
+            # Handle data imbalance with SMOTE
+            smote = SMOTE(random_state=42)
+            X_train_resampled, y_train_resampled = smote.fit_resample(X_train_processed, y_train)
+
+            logging.info("SMOTE applied to training data")
+
+            return (X_train_resampled, y_train_resampled, X_test_processed, y_test, self.transformation_config.preprocessor_obj_file_path)
 
         except Exception as e:
             raise TenYearChdException(e, sys)

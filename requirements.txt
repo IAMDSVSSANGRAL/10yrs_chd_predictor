@@ -8,6 +8,8 @@ matplotlib
 seaborn
 missingno
 flask
+imbalanced-learn
+
 
 #-e . #editable node
 
