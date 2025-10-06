@@ -273,7 +273,7 @@ This project is licensed under the MIT License.
 
 ## 👨‍💻 Author
 
-Your Name - [Your Email]
+Vishal singh sangral - support@havinosh.com
 
 ## 🙏 Acknowledgments
 
