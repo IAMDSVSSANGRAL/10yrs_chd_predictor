@@ -1,117 +1,282 @@
-# Predictor: 10-Year CHD Prediction
+# 10-Year Coronary Heart Disease (CHD) Risk Prediction
 
-## 📌 Project Overview
-This project aims to predict whether a person is at risk of developing Coronary Heart Disease (CHD) within the next 10 years based on various health parameters. CHD is a leading cause of heart-related complications, and early prediction can help in preventive measures.
-
-The model is designed to analyze relevant medical and lifestyle factors to classify individuals into high-risk and low-risk categories using machine learning techniques.
+A complete Machine Learning pipeline for predicting 10-year Coronary Heart Disease risk with a FastAPI REST API.
 
 ## 🚀 Features
-- Data ingestion and preprocessing
-- Exploratory Data Analysis (EDA)
-- Feature engineering and selection
-- Model training and evaluation
-- Prediction pipeline for real-world use
-- Model monitoring for continuous improvements
-- API integration using Flask
-- Deployment using Docker
 
-## 📂 Project Structure
+- Complete ML pipeline (ingestion, validation, transformation, training, evaluation, monitoring)
+- Multiple ML models comparison (Logistic Regression, Random Forest, XGBoost, etc.)
+- SMOTE for handling imbalanced data
+- Feature engineering for better predictions
+- RESTful API with FastAPI
+- Comprehensive model monitoring
+- Interactive API documentation
+
+## 📋 Requirements
+
+- Python 3.8+
+- PostgreSQL database
+- Virtual environment (recommended)
+
+## 🛠️ Installation
+
+### 1. Clone the repository
+
+```bash
+git clone <your-repo-url>
+cd 10yrs_chd_predictor
 ```
+
+### 2. Create virtual environment
+
+```bash
+python -m venv venv
+
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Setup environment variables
+
+Create a `.env` file in the root directory:
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=Healthcare
+DB_USER=postgres
+DB_PASSWORD=your_password
+```
+
+### 5. Prepare your database
+
+Make sure your PostgreSQL database has the table `data_cardiovascular_risk` with the required schema.
+
+## 🎯 Usage
+
+### Training the Model
+
+Run the complete ML pipeline:
+
+```bash
+python main.py
+```
+
+This will:
+1. Ingest data from PostgreSQL
+2. Validate data quality
+3. Transform and engineer features
+4. Train multiple models
+5. Evaluate and select best model
+6. Setup monitoring
+
+### Starting the API Server
+
+```bash
+python app.py
+```
+
+Or with uvicorn:
+
+```bash
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
+```
+
+The API will be available at: `http://localhost:8000`
+
+### Testing the API
+
+Run the test script:
+
+```bash
+python test_api.py
+```
+
+## 📚 API Endpoints
+
+### Health Check
+```http
+GET /health
+```
+
+### Single Prediction
+```http
+POST /predict
+Content-Type: application/json
+
+{
+  "age": 45,
+  "sex": "M",
+  "is_smoking": "YES",
+  "cigsperday": 20.0,
+  "bpmeds": 0.0,
+  "prevalentstroke": 0,
+  "prevalenthyp": 0,
+  "diabetes": 0,
+  "totchol": 250.0,
+  "sysbp": 140.0,
+  "diabp": 90.0,
+  "bmi": 28.5,
+  "heartrate": 75.0,
+  "glucose": 100.0,
+  "education": 2
+}
+```
+
+### Batch Prediction
+```http
+POST /batch-predict
+Content-Type: application/json
+
+[
+  {patient_data_1},
+  {patient_data_2},
+  ...
+]
+```
+
+### Model Information
+```http
+GET /model-info
+```
+
+## 📊 Interactive Documentation
+
+Once the server is running, visit:
+
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## 🧪 Testing with cURL
+
+### Health Check
+```bash
+curl http://localhost:8000/health
+```
+
+### Make Prediction
+```bash
+curl -X POST "http://localhost:8000/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 45,
+    "sex": "M",
+    "is_smoking": "YES",
+    "cigsperday": 20.0,
+    "bpmeds": 0.0,
+    "prevalentstroke": 0,
+    "prevalenthyp": 0,
+    "diabetes": 0,
+    "totchol": 250.0,
+    "sysbp": 140.0,
+    "diabp": 90.0,
+    "bmi": 28.5,
+    "heartrate": 75.0,
+    "glucose": 100.0,
+    "education": 2
+  }'
+```
+
+## 📁 Project Structure
+
+```
+10yrs_chd_predictor/
 ├── src/
-│   ├── predictor/
-│   │   ├── __init__.py
-│   │   ├── components/
-│   │   │   ├── __init__.py
-│   │   │   ├── data_ingestion.py
-│   │   │   ├── data_transformation.py
-│   │   │   ├── model_trainer.py
-│   │   │   ├── model_monitoring.py
-│   │   ├── pipelines/
-│   │   │   ├── __init__.py
-│   │   │   ├── training_pipeline.py
-│   │   │   ├── prediction_pipeline.py
-│   │   ├── exception.py
-│   │   ├── logger.py
-│   │   ├── utils.py
-├── notebooks/
-│   ├── data/
-│   ├── EDA.ipynb
-│   ├── model_training.ipynb
-├── artifacts/
-├── main.py
-├── app.py
-├── Dockerfile
-├── requirements.txt
-├── setup.py
-├── .env
-└── README.md
+│   └── predictor/
+│       ├── components/          # ML pipeline components
+│       ├── pipelines/           # Training and prediction pipelines
+│       ├── logger.py           # Logging configuration
+│       ├── exception.py        # Custom exceptions
+│       └── utils.py            # Utility functions
+├── artifacts/                  # Model artifacts and reports
+├── main.py                    # Training pipeline runner
+├── app.py                     # FastAPI application
+├── test_api.py               # API test script
+└── requirements.txt          # Dependencies
 ```
 
-## 🛠️ Tech Stack
-- **Programming Language**: Python
-- **Framework**: Flask (for API deployment)
-- **Machine Learning**: Scikit-Learn, TensorFlow/PyTorch
-- **Data Processing**: Pandas, NumPy
-- **Visualization**: Matplotlib, Seaborn
-- **Model Deployment**: Docker, GitHub Actions (CI/CD)
-- **Logging & Monitoring**: Logging module
+## 🔍 Model Features
 
-## 🔧 Installation & Setup
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/IAMDSVSSANGRAL/10yrs_chd_predictor.git
-   cd predictor
-   ```
-2. Create and activate a virtual environment:
-   ```sh
-   python -m venv venv
-   source venv/bin/activate   # On Windows use: venv\Scripts\activate
-   ```
-3. Install dependencies:
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. Run the application:
-   ```sh
-   python app.py
-   ```
+The model uses the following features:
 
-## 🏋️‍♂️ Usage
-- **Train the Model:**
-  ```sh
-  python main.py
-  ```
-- **Predict using API:**
-  ```sh
-  curl -X POST -H "Content-Type: application/json" -d '{"age": 50, "cholesterol": 220, "smoker": 1}' http://127.0.0.1:5000/predict
-  ```
+- **Demographics**: Age, Sex, Education
+- **Lifestyle**: Smoking status, Cigarettes per day
+- **Medical History**: Previous stroke, Hypertension, Diabetes
+- **Vital Signs**: Blood pressure (systolic/diastolic), Heart rate
+- **Lab Results**: Total cholesterol, BMI, Glucose
+- **Medications**: BP medication usage
 
-## 📊 Dataset
-The dataset contains medical and lifestyle attributes such as:
-- Age
-- Cholesterol level
-- Smoking habits
-- Blood pressure
-- Diabetes history
-- BMI
+## 📈 Model Performance
 
-## 🏆 Model Performance
-- **Accuracy:** XX%
-- **Precision:** XX%
-- **Recall:** XX%
-- **F1-score:** XX%
+The pipeline trains multiple models and selects the best based on F1-score. Typical performance:
 
-## 📌 Future Improvements
-- Add more real-world medical datasets for training.
-- Improve model performance with advanced feature selection.
-- Deploy as a cloud-based API.
+- Accuracy: ~85%
+- F1-Score: ~70%
+- ROC-AUC: ~75%
+
+(Note: Actual performance depends on your data)
+
+## 🔧 Configuration
+
+### Adjusting Model Parameters
+
+Edit `src/predictor/components/model_trainer.py` to modify model hyperparameters.
+
+### Changing Resampling Strategy
+
+In `main.py`, change:
+```python
+data_transformation = DataTransformation(use_smoteenn=True)  # Use SMOTEENN
+# or
+data_transformation = DataTransformation(use_smoteenn=False)  # Use SMOTE
+```
+
+## 📝 Logging
+
+Logs are automatically generated and stored. Check the console output for detailed pipeline execution logs.
+
+## 🐛 Troubleshooting
+
+### Database Connection Issues
+- Verify PostgreSQL is running
+- Check credentials in `.env` file
+- Ensure database and table exist
+
+### Model Loading Issues
+- Make sure `main.py` has been run successfully
+- Check if `artifacts/model.pkl` and `artifacts/preprocessor.pkl` exist
+
+### API Server Issues
+- Check if port 8000 is available
+- Try running on a different port: `uvicorn app:app --port 8080`
 
 ## 🤝 Contributing
-If you would like to contribute to this project, feel free to submit a pull request or open an issue.
 
-## 📜 License
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## 📄 License
+
 This project is licensed under the MIT License.
 
----
-Developed by [Vishal Singh Sangral] | **Havinosh Data Solutions** 🚀
+## 👨‍💻 Author
 
+Your Name - [Your Email]
+
+## 🙏 Acknowledgments
+
+- Framingham Heart Study for the CHD risk data concept
+- FastAPI for the excellent web framework
+- scikit-learn and imbalanced-learn communities

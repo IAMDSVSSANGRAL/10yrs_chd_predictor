@@ -1,15 +1,32 @@
-numpy==2.2.0
-pandas==2.2.3
-python-dotenv
-psycopg2-binary
-SQLAlchemy
+# Core ML Libraries
+pandas
+numpy
 scikit-learn
-matplotlib
-seaborn
-missingno
-flask
 imbalanced-learn
+xgboost
 
+# Data Processing
+joblib
+# Database
+psycopg2-binary
+python-dotenv
 
-#-e . #editable node
+# FastAPI
+fastapi
+uvicorn
+pydantic
+python-multipart
 
+# Testing
+requests
+pytest
+httpx
+
+# Monitoring
+prometheus-client
+
+# Utilities
+python-dateutil
+
+#flask
+flask
